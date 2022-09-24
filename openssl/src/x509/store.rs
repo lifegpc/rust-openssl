@@ -98,6 +98,24 @@ impl X509StoreBuilderRef {
         unsafe { cvt(ffi::X509_STORE_set_default_paths(self.as_ptr())).map(|_| ()) }
     }
 
+    /// Loads trusted certificate(s) into an X509_STORE from a given file and directory path.
+    #[corresponds(X509_STORE_load_locations)]
+    pub fn load_locations<P: AsRef<std::path::Path> + ?Sized, Q: AsRef<std::path::Path> + ?Sized>(&mut self, file: &P, dir: &Q) -> Result<(), ErrorStack> {
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ref().to_string_lossy().as_ptr() as *const i8, dir.as_ref().to_string_lossy().as_ptr() as *const i8)).map(|_| ()) }
+    }
+
+    /// Loads trusted certificate(s) into an X509_STORE from a given file path.
+    #[corresponds(X509_STORE_load_locations)]
+    pub fn load_file<P: AsRef<std::path::Path> + ?Sized>(&mut self, file: &P) -> Result<(), ErrorStack> {
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ref().to_string_lossy().as_ptr() as *const i8, 0 as *const i8)).map(|_| ()) }
+    }
+
+    /// Loads trusted certificate(s) into an X509_STORE from a given directory path.
+    #[corresponds(X509_STORE_load_locations)]
+    pub fn load_dir<P: AsRef<std::path::Path> + ?Sized>(&mut self, dir: &P) -> Result<(), ErrorStack> {
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), 0 as *const i8, dir.as_ref().to_string_lossy().as_ptr() as *const i8)).map(|_| ()) }
+    }
+
     /// Adds a lookup method to the store.
     #[corresponds(X509_STORE_add_lookup)]
     pub fn add_lookup<T>(

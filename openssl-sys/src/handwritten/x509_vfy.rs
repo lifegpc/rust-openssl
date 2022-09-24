@@ -45,6 +45,7 @@ extern "C" {
 
     pub fn X509_STORE_set_default_paths(store: *mut X509_STORE) -> c_int;
     pub fn X509_STORE_set_flags(store: *mut X509_STORE, flags: c_ulong) -> c_int;
+    pub fn X509_STORE_load_locations(store: *mut X509_STORE, file: *const c_char, dir: *const c_char) -> c_int;
 }
 
 const_ptr_api! {
