@@ -101,19 +101,23 @@ impl X509StoreBuilderRef {
     /// Loads trusted certificate(s) into an X509_STORE from a given file and directory path.
     #[corresponds(X509_STORE_load_locations)]
     pub fn load_locations<P: AsRef<std::path::Path> + ?Sized, Q: AsRef<std::path::Path> + ?Sized>(&mut self, file: &P, dir: &Q) -> Result<(), ErrorStack> {
-        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ref().to_string_lossy().as_ptr() as *const i8, dir.as_ref().to_string_lossy().as_ptr() as *const i8)).map(|_| ()) }
+        let file = CString::new(file.as_ref().to_string_lossy().to_string()).unwrap();
+        let dir = CString::new(dir.as_ref().to_string_lossy().to_string()).unwrap();
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ptr() as *const i8, dir.as_ptr() as *const i8)).map(|_| ()) }
     }
 
     /// Loads trusted certificate(s) into an X509_STORE from a given file path.
     #[corresponds(X509_STORE_load_locations)]
     pub fn load_file<P: AsRef<std::path::Path> + ?Sized>(&mut self, file: &P) -> Result<(), ErrorStack> {
-        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ref().to_string_lossy().as_ptr() as *const i8, 0 as *const i8)).map(|_| ()) }
+        let file = CString::new(file.as_ref().to_string_lossy().to_string()).unwrap();
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ptr() as *const i8, std::ptr::null())).map(|_| ()) }
     }
 
     /// Loads trusted certificate(s) into an X509_STORE from a given directory path.
     #[corresponds(X509_STORE_load_locations)]
     pub fn load_dir<P: AsRef<std::path::Path> + ?Sized>(&mut self, dir: &P) -> Result<(), ErrorStack> {
-        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), 0 as *const i8, dir.as_ref().to_string_lossy().as_ptr() as *const i8)).map(|_| ()) }
+        let dir = CString::new(dir.as_ref().to_string_lossy().to_string()).unwrap();
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), std::ptr::null(), dir.as_ptr() as *const i8)).map(|_| ()) }
     }
 
     /// Adds a lookup method to the store.
