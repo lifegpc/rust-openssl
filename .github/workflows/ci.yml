@@ -150,8 +150,6 @@ jobs:
             - false
           library:
             - name: boringssl
-              version: master
-            - name: boringssl
               version: 5697a9202615925696f8dc7f4e286d44d474769e
             - name: openssl
               version: vendored
@@ -180,12 +178,12 @@ jobs:
               bindgen: true
               library:
                 name: libressl
-                version: 3.4.3
+                version: 3.5.3
             - target: x86_64-unknown-linux-gnu
               bindgen: true
               library:
                 name: libressl
-                version: 3.5.2
+                version: 3.6.0
             - target: x86_64-unknown-linux-gnu
               bindgen: false
               library:
@@ -195,12 +193,12 @@ jobs:
               bindgen: false
               library:
                 name: libressl
-                version: 3.4.3
+                version: 3.5.3
             - target: x86_64-unknown-linux-gnu
               bindgen: false
               library:
                 name: libressl
-                version: 3.5.2
+                version: 3.6.0
           exclude:
             - library:
                 name: boringssl
