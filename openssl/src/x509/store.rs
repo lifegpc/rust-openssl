@@ -56,6 +56,7 @@ use crate::{cvt, cvt_p};
 use openssl_macros::corresponds;
 #[cfg(not(boringssl))]
 use std::ffi::CString;
+use libc::c_char;
 
 foreign_type_and_impl_send_sync! {
     type CType = ffi::X509_STORE;
@@ -111,21 +112,21 @@ impl X509StoreBuilderRef {
     pub fn load_locations<P: AsRef<std::path::Path> + ?Sized, Q: AsRef<std::path::Path> + ?Sized>(&mut self, file: &P, dir: &Q) -> Result<(), ErrorStack> {
         let file = CString::new(file.as_ref().to_string_lossy().to_string()).unwrap();
         let dir = CString::new(dir.as_ref().to_string_lossy().to_string()).unwrap();
-        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ptr() as *const i8, dir.as_ptr() as *const i8)).map(|_| ()) }
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ptr() as *const c_char, dir.as_ptr() as *const c_char)).map(|_| ()) }
     }
 
     /// Loads trusted certificate(s) into an X509_STORE from a given file path.
     #[corresponds(X509_STORE_load_locations)]
     pub fn load_file<P: AsRef<std::path::Path> + ?Sized>(&mut self, file: &P) -> Result<(), ErrorStack> {
         let file = CString::new(file.as_ref().to_string_lossy().to_string()).unwrap();
-        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ptr() as *const i8, std::ptr::null())).map(|_| ()) }
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), file.as_ptr() as *const c_char, std::ptr::null())).map(|_| ()) }
     }
 
     /// Loads trusted certificate(s) into an X509_STORE from a given directory path.
     #[corresponds(X509_STORE_load_locations)]
     pub fn load_dir<P: AsRef<std::path::Path> + ?Sized>(&mut self, dir: &P) -> Result<(), ErrorStack> {
         let dir = CString::new(dir.as_ref().to_string_lossy().to_string()).unwrap();
-        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), std::ptr::null(), dir.as_ptr() as *const i8)).map(|_| ()) }
+        unsafe { cvt(ffi::X509_STORE_load_locations(self.as_ptr(), std::ptr::null(), dir.as_ptr() as *const c_char)).map(|_| ()) }
     }
 
     /// Adds a lookup method to the store.
